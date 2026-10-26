@@ -2,39 +2,127 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>KANISA PRO — Test d'admission</title>
 <style>
-:root{--b:#16477d;--b2:#246bb0;--ink:#172438;--muted:#617086;--line:#dce4ee;--bg:#f3f6fa}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Arial,sans-serif}
-header{background:linear-gradient(130deg,var(--b),var(--b2));color:white;padding:26px 16px}.wrap{width:min(900px,calc(100% - 28px));margin:auto}.brand{font-weight:800;letter-spacing:.12em;font-size:1.55rem}
-main{padding:22px 0 40px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:21px;margin-bottom:17px;box-shadow:0 4px 15px #1b36500a}
-h1{font-size:1.55rem;margin:0 0 8px}h2{font-size:1.15rem;color:var(--b);margin:0 0 12px}.muted{color:var(--muted)}.notice{padding:12px 14px;background:#eef5ff;border-left:4px solid var(--b2);border-radius:8px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{display:block;font-weight:700;margin-bottom:6px}
-input[type=text],input[type=email],input[type=tel]{width:100%;padding:11px;border:1px solid #bcc9d9;border-radius:8px;font:inherit}
-fieldset{border:1px solid var(--line);border-radius:11px;padding:12px 15px;margin:14px 0}legend{font-weight:700;padding:0 5px}.option{display:flex;gap:9px;align-items:flex-start;font-weight:400;margin:8px 0}.option input{margin-top:5px}
-button{border:0;border-radius:9px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--b2);color:white}.secondary{background:#e9f1fb;color:var(--b)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
-.small{font-size:.9rem}.success{color:#167548}.failure{color:#b42318}.score{font-size:2rem;font-weight:800;color:var(--b)}#result{display:none}.contact p{margin:6px 0}footer{text-align:center;padding:0 12px 25px;color:var(--muted);font-size:.9rem}
+:root{--b:#16477d;--b2:#246bb0;--ink:#172438;--muted:#617086;--line:#dce4ee;--bg:#f3f6fa;--ok:#167548;--ko:#b42318}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{width:min(860px,calc(100% - 28px));margin:auto}
+#timerbar{position:sticky;top:0;z-index:10;display:none;justify-content:center;align-items:center;gap:12px;background:#0f2f55;color:#fff;padding:9px 14px;font-size:1.05rem}
+#timerbar strong{font-size:1.35rem;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+#timerbar.warn{background:var(--ko)}
+header{background:linear-gradient(130deg,var(--b),var(--b2));color:#fff;padding:26px 16px;text-align:center}
+header img{max-height:96px;max-width:70%;height:auto;display:block;margin:0 auto 10px;background:#fff;border-radius:14px;padding:8px}
+.brand{display:none;font-weight:800;letter-spacing:.14em;font-size:1.7rem}
+header p{margin:4px 0 0;opacity:.95}
+main{padding:22px 0 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px;box-shadow:0 4px 15px #1b36500a}
+h1{font-size:1.6rem;margin:0 0 10px;color:var(--b)}
+h2{font-size:1.15rem;color:var(--b);margin:0 0 12px}
+.muted{color:var(--muted)}.small{font-size:.92rem}
+.notice{padding:13px 15px;background:#eef5ff;border-left:4px solid var(--b2);border-radius:9px;margin:14px 0}
+.rules{margin:10px 0 0;padding-left:20px}.rules li{margin:6px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-weight:700;margin-bottom:6px}
+input[type=text],input[type=email],input[type=tel]{width:100%;padding:12px;border:1px solid #bcc9d9;border-radius:9px;font:inherit}
+input:focus{outline:2px solid var(--b2);outline-offset:1px}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin:14px 0}
+legend{font-weight:700;padding:0 6px}
+.option{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:9px 0;cursor:pointer}
+.option input{margin-top:6px}
+button{border:0;border-radius:10px;padding:13px 18px;font:inherit;font-weight:700;cursor:pointer}
+.primary{background:var(--b2);color:#fff}.secondary{background:#e9f1fb;color:var(--b)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.success{color:var(--ok)}.failure{color:var(--ko)}
+.score{font-size:2.6rem;font-weight:800;color:var(--b);margin:4px 0}
+#sendScreen,#result,#blocked{display:none}
+.contact p{margin:6px 0}
+footer{text-align:center;padding:0 12px 28px;color:var(--muted);font-size:.9rem}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:16px}h1{font-size:1.35rem}}
-@media print{header,footer,#application,#quiz,.no-print{display:none!important}#result{display:block!important}body{background:white}.card{box-shadow:none;border:0}}
+@media print{#timerbar,header,footer,#testArea,#sendScreen,#blocked,.no-print{display:none!important}#result{display:block!important}body{background:#fff}.card{box-shadow:none;border:0}}
 </style></head><body>
-<header><div class="wrap"><div class="brand">KANISA PRO</div><p>Formation pratique en assistanat de direction · Évaluation d'admission</p></div></header>
+
+<div id="timerbar" class="no-print"><span>⏱ Temps restant</span><strong id="clock">30:00</strong></div>
+
+<header><div class="wrap">
+<img src="logo.png" alt="KANISA PRO" onerror="this.style.display='none';document.getElementById('brandText').style.display='block'">
+<div class="brand" id="brandText">KANISA PRO</div>
+<p>Formation pratique en assistanat de direction</p>
+<p><strong>Test d'admission</strong></p>
+</div></header>
+
 <main class="wrap">
-<section class="card"><h1>Test d'admission à la formation</h1><p class="muted">10 questions à choix multiple. Chaque bonne réponse vaut 2 points, pour un total de 20 points.</p>
-<div class="notice"><strong>Seuil d'admission : 8/20.</strong> Un score de 8/20 ou plus atteint le seuil. En dessous, un remboursement peut être demandé et sera traité manuellement après vérification du paiement.</div>
-<p class="small muted">Formation en ligne : samedis 7, 14, 21 et 28 novembre 2026 à 20 h (heure de Kinshasa). Participation : 10 USD. Maximum : 20 participants.</p></section>
-<form id="form"><section class="card" id="application"><h2>1. Informations du candidat</h2><div class="grid">
-<div><label for="name">Nom complet *</label><input id="name" name="name" type="text" autocomplete="name" required></div>
-<div><label for="phone">Téléphone / WhatsApp *</label><input id="phone" name="phone" type="tel" placeholder="+243..." autocomplete="tel" required></div>
-<div><label for="email">Adresse e-mail *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-<div><label for="payment">Référence de paiement *</label><input id="payment" name="payment" type="text" placeholder="Référence de transaction" required></div></div>
-<p class="small muted">Ne saisissez jamais votre code PIN Mobile Money. La transaction sera vérifiée manuellement par KANISA PRO.</p></section>
-<section class="card" id="quiz"><h2>2. Questionnaire</h2><div id="questions"></div><div class="actions no-print"><button class="primary" type="submit">Soumettre mes réponses</button><button class="secondary" type="reset">Effacer les réponses</button></div></section></form>
-<section class="card" id="result" aria-live="polite"><div id="heading"></div><div class="score" id="score"></div><p id="message"></p><div id="refund"></div>
-<div class="notice small"><strong>À savoir :</strong> le résultat affiché ne confirme pas à lui seul l'admission. KANISA PRO doit vérifier les informations et le paiement.</div>
-<div class="actions no-print"><button class="primary" id="emailBtn" type="button">Préparer un e-mail</button><button class="secondary" type="button" onclick="window.print()">Imprimer / enregistrer</button><button class="secondary" id="retry" type="button">Recommencer</button></div></section>
-<section class="card contact"><h2>3. Contact et paiement</h2><p><strong>WhatsApp :</strong> +243 972 435 902</p><p><strong>E-mail :</strong> kanisapro.formation2026@gmail.com</p><p><strong>Orange Money :</strong> +243 899 923 701</p><p><strong>M-Pesa :</strong> +243 831 092 623</p>
-<p class="small muted">Pour un score inférieur à 8/20, contactez KANISA PRO. Après vérification de la transaction, le remboursement est effectué manuellement via Orange Money ou M-Pesa. Aucun remboursement automatique n'est déclenché par le site.</p></section>
-<section class="card"><h2>Protection des données — limites de cette version</h2><p class="small muted">Cette version autonome ne transmet ni ne sauvegarde les coordonnées ou réponses dans une base centrale. Le score est calculé dans le navigateur et peut être manipulé. Pour un usage officiel, vérifiez manuellement les paiements et résultats. Une version de production doit intégrer un serveur sécurisé, un stockage protégé, un espace administrateur et une politique de confidentialité.</p></section>
-</main><footer>KANISA PRO · Site d'évaluation d'admission</footer>
+
+<section class="card" id="blocked"><h2 id="blockedTitle"></h2><p id="blockedText"></p>
+<p class="small muted">Besoin d'aide ? Écrivez-nous sur WhatsApp au <strong>+243 972 435 902</strong>.</p></section>
+
+<div id="testArea">
+<section class="card" id="intro">
+<h1>Bienvenue au test d'admission</h1>
+<p>Ce test comporte <strong>10 questions à choix multiple</strong>. Chaque bonne réponse vaut 2 points, pour un total de 20 points.</p>
+<div class="notice"><strong>Avant de commencer, lisez bien ces règles :</strong>
+<ul class="rules">
+<li><strong>Durée : 30 minutes.</strong> Le chronomètre a démarré à l'ouverture de cette page. Il continue même si vous quittez ou rechargez la page.</li>
+<li><strong>Une seule tentative</strong> par candidat. Il n'est pas possible de recommencer.</li>
+<li>Quand le temps est écoulé, vos réponses sont <strong>envoyées automatiquement</strong>.</li>
+<li>Votre résultat est <strong>transmis directement à KANISA PRO</strong> : vous n'avez rien d'autre à envoyer.</li>
+<li><strong>Seuil d'admission : 8/20.</strong></li>
+</ul></div>
+<p class="small muted">Formation en ligne : samedis 7, 14, 21 et 28 novembre 2026 à 20 h (heure de Kinshasa). Participation : 10 USD. Maximum : 20 participants.</p>
+</section>
+
+<form id="form">
+<section class="card" id="application"><h2>1. Vos informations</h2>
+<div class="grid">
+<div><label for="name">Nom complet *</label><input id="name" type="text" autocomplete="name" required></div>
+<div><label for="phone">Téléphone / WhatsApp *</label><input id="phone" type="tel" inputmode="tel" placeholder="+243…" autocomplete="tel" required></div>
+<div><label for="email">Adresse e-mail *</label><input id="email" type="email" autocomplete="email" required></div>
+<div><label for="payment">Référence de paiement *</label><input id="payment" type="text" placeholder="Référence de la transaction" required></div>
+</div>
+<p class="small muted">Ne saisissez jamais votre code PIN Mobile Money. KANISA PRO vérifiera votre transaction manuellement.</p>
+</section>
+<section class="card" id="quiz"><h2>2. Questions</h2><div id="questions"></div>
+<div class="actions"><button class="primary" type="submit">Terminer et envoyer mes réponses</button></div>
+<p class="small muted">Attention : une fois envoyées, vos réponses ne peuvent plus être modifiées.</p>
+</section>
+</form>
+</div>
+
+<section class="card" id="sendScreen">
+<h2>Envoi de votre test</h2>
+<p id="sendStatus" aria-live="polite">Envoi en cours…</p>
+<div class="actions" id="sendActions" style="display:none">
+<button class="primary" id="retryBtn" type="button">Réessayer l'envoi</button>
+<button class="secondary" id="mailBtn" type="button">Envoyer par e-mail</button>
+</div>
+<p class="small muted" id="sendHelp" style="display:none">Vos réponses sont conservées sur cet appareil. Vérifiez votre connexion Internet, puis appuyez sur « Réessayer l'envoi ». Ne fermez pas cette page. En cas de problème : WhatsApp +243 972 435 902.</p>
+</section>
+
+<section class="card" id="result" aria-live="polite">
+<div id="heading"></div><div class="score" id="score"></div><p id="message"></p><div id="refund"></div>
+<div class="notice small"><strong>À savoir :</strong> votre test a bien été transmis à KANISA PRO. Votre admission est confirmée uniquement après vérification de vos réponses et de votre paiement.</div>
+<div class="actions no-print"><button class="secondary" type="button" onclick="window.print()">Enregistrer / imprimer mon résultat</button></div>
+</section>
+
+<section class="card contact"><h2>Contact et paiement</h2>
+<p><strong>WhatsApp :</strong> +243 972 435 902</p>
+<p><strong>E-mail :</strong> kanisapro.formation2026@gmail.com</p>
+<p><strong>Orange Money :</strong> +243 899 923 701</p>
+<p><strong>M-Pesa :</strong> +243 831 092 623</p>
+<p class="small muted">Si votre score est inférieur à 8/20, contactez KANISA PRO. Après vérification de votre transaction, le remboursement est effectué manuellement par Orange Money ou M-Pesa. Aucun remboursement automatique n'est déclenché par ce site.</p>
+</section>
+
+<section class="card"><h2>Protection des données</h2>
+<p class="small muted">Vos informations et vos réponses sont transmises à KANISA PRO par le service Formspree au moment de l'envoi. Elles servent uniquement à évaluer votre admission et à vérifier votre paiement.</p></section>
+</main>
+<footer>KANISA PRO · Test d'admission</footer>
+
 <script>
+/* ===== Réglages ===== */
+const FORM_URL="https://formspree.io/f/VOTRE_ID"; /* ← remplacer par l'adresse Formspree */
+const DURATION=30*60*1000;   /* 30 minutes */
+const PASS=8;                /* seuil d'admission */
+const CONTACT_MAIL="kanisapro.formation2026@gmail.com";
+
+/* ===== Questions : [énoncé, [choix], index de la bonne réponse] ===== */
 const qs=[
 ["Quel est le rôle principal d'un assistant de direction ?",["Prendre seul toutes les décisions stratégiques","Faciliter l'organisation et le fonctionnement de la direction","Remplacer systématiquement le directeur"],1],
 ["Que signifie la confidentialité au travail ?",["Partager les dossiers avec tous les collègues","Protéger les informations sensibles et limiter leur accès aux personnes autorisées","Conserver les documents sans classement"],1],
@@ -47,15 +135,148 @@ const qs=[
 ["Que faire avant d'envoyer une lettre professionnelle ?",["Vérifier le destinataire, le contenu, l'orthographe et les pièces jointes","Envoyer sans relecture","Utiliser un langage familier dans tous les cas"],0],
 ["Pourquoi vérifier une référence de paiement avant un remboursement ?",["Retarder volontairement le candidat","Confirmer la transaction et éviter les erreurs ou les fraudes","Parce qu'une référence est inutile"],1]
 ];
-const root=document.getElementById("questions");
-qs.forEach((q,i)=>{const fs=document.createElement("fieldset"),lg=document.createElement("legend");lg.textContent=(i+1)+". "+q[0];fs.appendChild(lg);q[1].forEach((a,j)=>{const l=document.createElement("label"),r=document.createElement("input"),s=document.createElement("span");l.className="option";r.type="radio";r.name="q"+i;r.value=j;r.required=true;s.textContent=["A. ","B. ","C. "][j]+a;l.append(r,s);fs.appendChild(l)});root.appendChild(fs)});
-let resultData=null;
-document.getElementById("form").addEventListener("submit",e=>{e.preventDefault();const f=e.currentTarget;if(!f.reportValidity())return;let pts=0;qs.forEach((q,i)=>{const v=f.querySelector('input[name="q'+i+'"]:checked');if(v&&Number(v.value)===q[2])pts+=2});
-const admitted=pts>=8;resultData={name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),email:document.getElementById("email").value.trim(),payment:document.getElementById("payment").value.trim(),pts,admitted};
-const h=document.getElementById("heading");h.textContent=admitted?"Résultat : seuil d'admission atteint":"Résultat : seuil d'admission non atteint";h.className=admitted?"success":"failure";h.style.fontWeight="800";h.style.fontSize="1.3rem";document.getElementById("score").textContent=pts+"/20";
-document.getElementById("message").textContent=admitted?"Votre score atteint le seuil minimum de 8/20. L'admissibilité sera confirmée après vérification du paiement.":"Votre score est inférieur à 8/20. Après vérification du paiement, contactez KANISA PRO pour demander un remboursement manuel via Orange Money ou M-Pesa.";
-document.getElementById("refund").innerHTML=admitted?"":"<p><strong>Remboursement :</strong> demande manuelle après vérification de la transaction. Aucun remboursement automatique.</p>";document.getElementById("result").style.display="block";document.getElementById("result").scrollIntoView({behavior:"smooth"})});
-document.getElementById("emailBtn").addEventListener("click",()=>{if(!resultData)return;const d=resultData;const subject=encodeURIComponent("Test d'admission KANISA PRO — vérification");const body=encodeURIComponent("Bonjour KANISA PRO,\n\nMerci de vérifier mes informations :\nNom : "+d.name+"\nTéléphone : "+d.phone+"\nE-mail : "+d.email+"\nRéférence de paiement : "+d.payment+"\nScore affiché : "+d.pts+"/20\nRésultat : "+(d.admitted?"Seuil atteint, sous réserve de vérification":"Seuil non atteint — demande de remboursement manuel")+"\n\nMerci.");location.href="mailto:kanisapro.formation2026@gmail.com?subject="+subject+"&body="+body});
-document.getElementById("retry").addEventListener("click",()=>{document.getElementById("form").reset();document.getElementById("result").style.display="none";resultData=null;window.scrollTo({top:0,behavior:"smooth"})});
-document.getElementById("form").addEventListener("reset",()=>{document.getElementById("result").style.display="none";resultData=null});
+
+/* ===== Outils ===== */
+const $=id=>document.getElementById(id);
+const mem={};
+const S={
+ get(k){try{return localStorage.getItem(k)}catch(e){return mem[k]!==undefined?mem[k]:null}},
+ set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}},
+ del(k){try{localStorage.removeItem(k)}catch(e){delete mem[k]}}
+};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const pad=n=>String(n).padStart(2,"0");
+
+/* ===== Construction des questions ===== */
+(function(){
+ const root=$("questions");
+ qs.forEach((q,i)=>{
+  const fs=document.createElement("fieldset"),lg=document.createElement("legend");
+  lg.textContent=(i+1)+". "+q[0];fs.appendChild(lg);
+  q[1].forEach((a,j)=>{
+   const l=document.createElement("label"),r=document.createElement("input"),s=document.createElement("span");
+   l.className="option";r.type="radio";r.name="q"+i;r.value=j;r.required=true;
+   s.textContent="ABC"[j]+". "+a;l.append(r,s);fs.appendChild(l);
+  });
+  root.appendChild(fs);
+ });
+})();
+
+/* ===== État ===== */
+let payload=null,sending=false,finished=false,timerId=null,startAt=0;
+
+function showOnly(id){
+ ["testArea","sendScreen","result","blocked"].forEach(x=>{$(x).style.display=(x===id)?"block":"none"});
+ $("timerbar").style.display=(id==="testArea")?"flex":"none";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function blocked(title,text){$("blockedTitle").textContent=title;$("blockedText").textContent=text;showOnly("blocked")}
+
+/* ===== Collecte des réponses et calcul du score ===== */
+function collect(timeout){
+ const f=$("form");let pts=0;const lines=[];
+ qs.forEach((q,i)=>{
+  const v=f.querySelector('input[name="q'+i+'"]:checked');
+  const ok=!!v&&Number(v.value)===q[2];if(ok)pts+=2;
+  lines.push("Q"+(i+1)+" : "+(v?("ABC"[v.value]+". "+q[1][v.value]):"(sans réponse)")+"  →  "+(ok?"correct":"incorrect"));
+ });
+ const g=id=>$(id).value.trim()||"(non renseigné)";
+ const used=Math.min(DURATION,Date.now()-startAt);
+ return {
+  id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+  name:g("name"),phone:g("phone"),email:$("email").value.trim(),payment:g("payment"),
+  pts:pts,admitted:pts>=PASS,timeout:!!timeout,
+  duree:pad(Math.floor(used/60000))+" min "+pad(Math.floor(used/1000)%60)+" s",
+  detail:lines.join("\n")
+ };
+}
+
+/* ===== Envoi automatique à KANISA PRO ===== */
+async function transmit(){
+ if(sending)return false;sending=true;
+ const p=payload,body={
+  _subject:"Test KANISA PRO — "+p.name+" — "+p.pts+"/20"+(p.timeout?" (temps écoulé)":""),
+  numero_tentative:p.id,nom:p.name,telephone:p.phone,reference_paiement:p.payment,
+  score:p.pts+"/20",resultat:p.admitted?"Seuil atteint":"Seuil non atteint",
+  temps_ecoule:p.timeout?"Oui (envoi automatique)":"Non",duree_utilisee:p.duree,reponses:p.detail
+ };
+ if(p.email&&/^\S+@\S+\.\S+$/.test(p.email))body.email=p.email;
+ for(let t=0;t<3;t++){
+  try{
+   const r=await fetch(FORM_URL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)});
+   if(r.ok){sending=false;return true}
+  }catch(e){}
+  await wait(1500*(t+1));
+ }
+ sending=false;return false;
+}
+async function attemptSend(){
+ $("sendStatus").textContent="Envoi de votre test à KANISA PRO… Merci de patienter, ne fermez pas cette page.";
+ $("sendStatus").className="";
+ $("sendActions").style.display="none";$("sendHelp").style.display="none";
+ if(FORM_URL.indexOf("VOTRE_ID")>-1){complete();return}   /* mode test : pas encore configuré */
+ const ok=await transmit();
+ if(ok)complete();else{
+  $("sendStatus").textContent="L'envoi n'a pas abouti. Vos réponses sont conservées sur cet appareil.";
+  $("sendStatus").className="failure";
+  $("sendActions").style.display="flex";$("sendHelp").style.display="block";
+ }
+}
+function complete(){S.del("kp_pending");S.set("kp_done","1");showResult()}
+
+async function finalize(timeout){
+ if(finished)return;finished=true;clearInterval(timerId);
+ payload=collect(timeout);S.set("kp_pending",JSON.stringify(payload));
+ showOnly("sendScreen");await attemptSend();
+}
+
+/* ===== Affichage du résultat ===== */
+function showResult(){
+ const p=payload,h=$("heading");
+ h.textContent=p.admitted?"Seuil d'admission atteint":"Seuil d'admission non atteint";
+ h.className=p.admitted?"success":"failure";h.style.fontWeight="800";h.style.fontSize="1.3rem";
+ $("score").textContent=p.pts+"/20";
+ let m=p.admitted
+  ?"Félicitations ! Votre score atteint le seuil d'admission de 8/20. KANISA PRO confirmera votre admission après vérification de votre paiement."
+  :"Votre score est inférieur au seuil de 8/20. Après vérification de votre paiement, KANISA PRO traitera votre demande de remboursement manuellement (Orange Money ou M-Pesa). Contactez-nous sur WhatsApp au +243 972 435 902.";
+ if(p.timeout)m="Le temps imparti est écoulé : vos réponses ont été envoyées automatiquement. "+m;
+ $("message").textContent=m;
+ $("refund").innerHTML=p.admitted?"":"<p><strong>Remboursement :</strong> demande traitée manuellement après vérification de la transaction. Aucun remboursement automatique.</p>";
+ showOnly("result");
+}
+
+/* ===== Chronomètre ===== */
+function tick(){
+ const left=startAt+DURATION-Date.now();
+ if(left<=0){$("clock").textContent="00:00";finalize(true);return}
+ const m=Math.floor(left/60000),s=Math.floor(left/1000)%60;
+ $("clock").textContent=pad(m)+":"+pad(s);
+ $("timerbar").classList.toggle("warn",left<=5*60000);
+}
+
+/* ===== Boutons ===== */
+$("form").addEventListener("submit",e=>{
+ e.preventDefault();if(finished)return;
+ if(!e.currentTarget.reportValidity())return;
+ if(!confirm("Terminer le test et envoyer vos réponses ? Vous ne pourrez plus les modifier."))return;
+ finalize(false);
+});
+$("retryBtn").addEventListener("click",attemptSend);
+$("mailBtn").addEventListener("click",()=>{
+ const p=payload;if(!p)return;
+ const body="Bonjour KANISA PRO,\n\nVoici mon test d'admission :\nNom : "+p.name+"\nTéléphone : "+p.phone+"\nE-mail : "+p.email+"\nRéférence de paiement : "+p.payment+"\nScore : "+p.pts+"/20\n\n"+p.detail+"\n\nN° de tentative : "+p.id;
+ location.href="mailto:"+CONTACT_MAIL+"?subject="+encodeURIComponent("Test d'admission KANISA PRO — "+p.name)+"&body="+encodeURIComponent(body);
+});
+
+/* ===== Démarrage ===== */
+(function init(){
+ const pending=S.get("kp_pending");
+ if(pending){try{payload=JSON.parse(pending)}catch(e){payload=null}}
+ if(payload){finished=true;showOnly("sendScreen");attemptSend();return}       /* envoi interrompu : on le reprend */
+ if(S.get("kp_done")){finished=true;blocked("Test déjà passé","Votre test a déjà été transmis à KANISA PRO sur cet appareil. Une seule tentative est autorisée.");return}
+ startAt=Number(S.get("kp_start"))||0;
+ if(!startAt){startAt=Date.now();S.set("kp_start",String(startAt))}
+ else if(Date.now()-startAt>=DURATION){finished=true;S.set("kp_done","1");blocked("Temps écoulé","Le temps imparti de 30 minutes est écoulé et aucune réponse n'a été envoyée. Contactez KANISA PRO pour la suite de votre dossier.");return}
+ showOnly("testArea");tick();timerId=setInterval(tick,1000);
+})();
 </script></body></html>
